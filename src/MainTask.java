@@ -2,14 +2,18 @@ import java.io.*;
 
 public class MainTask {
     public static void main(String[] args) {
+        final String DIRECTORY_PATH = args[0];
+        final String STRUCTURE_FILE_PATH = args[1];
+        try (FileWriter structureFile = new FileWriter(STRUCTURE_FILE_PATH)) {
+            structureFile.write(new File(DIRECTORY_PATH).getName() + "\n");
 
-        try (FileWriter structureFile = new FileWriter(args[1]);
-             BufferedReader structureFileReader = new BufferedReader(new FileReader(args[1]));
-             BufferedReader fileForFoldersCounting = new BufferedReader(new FileReader(args[1]));
-             BufferedReader fileForFileLengthSum = new BufferedReader(new FileReader(args[1]))) {
-            structureFile.write(new File(args[0]).getName() + "\n");
-
-            writeDirectoryStructureToFile(args[0], structureFile);
+            writeDirectoryStructureToFile(DIRECTORY_PATH, structureFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try (BufferedReader structureFileReader = new BufferedReader(new FileReader(STRUCTURE_FILE_PATH));
+             BufferedReader fileForFoldersCounting = new BufferedReader(new FileReader(STRUCTURE_FILE_PATH));
+             BufferedReader fileForFileLengthSum = new BufferedReader(new FileReader(STRUCTURE_FILE_PATH))) {
 
             long quantityOfFilesInDirectory = structureFileReader.lines().filter(p -> p.contains("|    ")).count();
             long quantityOfFoldersInDirectory = fileForFoldersCounting.lines().filter(p -> p.contains("|----")).count();
@@ -19,7 +23,6 @@ public class MainTask {
             System.out.println("Quantity of files in directory: " + quantityOfFilesInDirectory);
             System.out.println("Average quantity of files in folder: " + quantityOfFilesInDirectory / quantityOfFoldersInDirectory);
             System.out.println("Average length of file name is: " + sumOfAllFileNameSymbols / quantityOfFilesInDirectory);
-
         } catch (IOException e) {
             e.printStackTrace();
         }

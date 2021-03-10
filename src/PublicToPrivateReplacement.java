@@ -5,14 +5,11 @@ import java.util.Properties;
 public class PublicToPrivateReplacement {
     public static void main(String[] args) throws IOException {
         Properties property = new Properties();
-        FileInputStream fileInputStream = new FileInputStream("/Users/Valentina/data/javaio/resources/properties.properties");
+        FileInputStream fileInputStream = new FileInputStream("/Users/Valentina/data/javaio/resources/mylinks.properties");
         property.load(fileInputStream);
 
-        String sourceFileForReplacement = property.getProperty("sourceFileForReplacement");
-        String fileAfterReplacement = property.getProperty("fileAfterReplacement");
-
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(sourceFileForReplacement));
-             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileAfterReplacement))) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(property.getProperty("sourceFileForReplacement")));
+             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(property.getProperty("fileAfterReplacement")))) {
 
             String line;
             while ((line = bufferedReader.readLine()) != null) {

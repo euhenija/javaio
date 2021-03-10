@@ -10,22 +10,17 @@ public class TaskWithRandomNumbers {
     public static void main(String[] args) {
 
         Properties property = new Properties();
-        try (FileInputStream fileInputStream = new FileInputStream("/Users/Valentina/data/javaio/resources/properties.properties")) {
+        try (FileInputStream fileInputStream = new FileInputStream("/Users/Valentina/data/javaio/resources/mylinks.properties")) {
             property.load(fileInputStream);
 
-            String fileWithRandomNumbers = property.getProperty("fileWithRandomNumbers");
-            String fileWithSortedRandomNumbers = property.getProperty("fileWithSortedRandomNumbers");
-
-            Path randomNumbersFilePath = Paths.get(fileWithRandomNumbers);
-            Path outputPathForSortedNumbers = Paths.get(fileWithSortedRandomNumbers);
-
-            Random random = new Random();
-            List<String> randomNumberList = new ArrayList<>();
-            for (int i = 0; i < 10; i++) {
-                randomNumberList.add(String.valueOf(random.nextInt(1000)));
+            Path randomNumbersFilePath = Paths.get(property.getProperty("fileWithRandomNumbers"));
+            Path outputPathForSortedNumbers = Paths.get(property.getProperty("fileWithSortedRandomNumbers"));
+            try (FileWriter structureFile = new FileWriter(property.getProperty("fileWithRandomNumbers"))) {
+                Random random = new Random();
+                for (int i = 0; i < 10; i++) {
+                    structureFile.write(random.nextInt(1000) + "\n");
+                }
             }
-
-            Files.write(randomNumbersFilePath, randomNumberList);
 
             List<String> listOfNumbers = Files.readAllLines(randomNumbersFilePath);
             listOfNumbers.sort(Comparator.comparing(Integer::valueOf));
