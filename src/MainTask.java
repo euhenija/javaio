@@ -1,27 +1,41 @@
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 public class MainTask {
     public static void main(String[] args) {
 
-        try (FileWriter structureFile = new FileWriter("/Users/Valentina/data/javaio/resources/structure.txt", true)) {
+        try (FileWriter structureFile = new FileWriter(args[1]);
+             BufferedReader structureFileReader = new BufferedReader(new FileReader(args[1]));
+             BufferedReader fileForFoldersCounting = new BufferedReader(new FileReader(args[1]));
+             BufferedReader fileForFileLengthSum = new BufferedReader(new FileReader(args[1]))) {
             structureFile.write(new File(args[0]).getName() + "\n");
-            File[] listOfFoldersAndFilesInDirectory = new File(args[0]).listFiles();
 
-            assert listOfFoldersAndFilesInDirectory != null;
-            for (File elementOfDirectory : listOfFoldersAndFilesInDirectory) {
-                structureFile.write("|----" + elementOfDirectory.getName() + "\n");
-                File content = new File(elementOfDirectory.getPath());
-                File[] listOfFolderElements = content.listFiles();
-                assert listOfFolderElements != null;
-                for (File folderElement : listOfFolderElements) {
-                    structureFile.write("|    " + folderElement.getName() + "\n");
-                }
-                structureFile.write(System.lineSeparator());
-            }
+            writeDirectoryStructureToFile(args[0], structureFile);
+
+            long quantityOfFilesInDirectory = structureFileReader.lines().filter(p -> p.contains("|    ")).count();
+            long quantityOfFoldersInDirectory = fileForFoldersCounting.lines().filter(p -> p.contains("|----")).count();
+            long sumOfAllFileNameSymbols = fileForFileLengthSum.lines().filter(p -> p.contains("|    ")).mapToInt(String::length).sum();
+
+            System.out.println("Quantity of folders in directory: " + quantityOfFoldersInDirectory);
+            System.out.println("Quantity of files in directory: " + quantityOfFilesInDirectory);
+            System.out.println("Average quantity of files in folder: " + quantityOfFilesInDirectory / quantityOfFoldersInDirectory);
+            System.out.println("Average length of file name is: " + sumOfAllFileNameSymbols / quantityOfFilesInDirectory);
+
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void writeDirectoryStructureToFile(String directoryPath, FileWriter structureFile) throws IOException {
+        File[] listOfFoldersAndFilesInDirectory = new File(directoryPath).listFiles();
+
+        for (File elementOfDirectory : listOfFoldersAndFilesInDirectory) {
+            if (elementOfDirectory.isDirectory() && !elementOfDirectory.isHidden()) {
+                structureFile.write("|----" + elementOfDirectory.getName() + "\n");
+                String path = elementOfDirectory.getPath();
+                writeDirectoryStructureToFile(path, structureFile);
+            } else if (elementOfDirectory.isFile() && !elementOfDirectory.isHidden()) {
+                structureFile.write("|    " + elementOfDirectory.getName() + "\n");
+            }
         }
     }
 }
