@@ -34,8 +34,7 @@ public class MainTask {
         for (File elementOfDirectory : listOfFoldersAndFilesInDirectory) {
             if (elementOfDirectory.isDirectory() && !elementOfDirectory.isHidden()) {
                 structureFile.write("|----" + elementOfDirectory.getName() + "\n");
-                String path = elementOfDirectory.getPath();
-                writeDirectoryStructureToFile(path, structureFile);
+                writeDirectoryStructureToFile(elementOfDirectory.getPath(), structureFile);
             } else if (elementOfDirectory.isFile() && !elementOfDirectory.isHidden()) {
                 structureFile.write("|    " + elementOfDirectory.getName() + "\n");
             }
